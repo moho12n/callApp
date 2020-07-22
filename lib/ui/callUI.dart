@@ -3,7 +3,11 @@ import 'dart:async';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter_timer/flutter_timer.dart';
 
+
 class CallUI extends StatefulWidget {
+  final String channel;
+  
+  CallUI(this.channel);
   @override
   _CallUIState createState() => _CallUIState();
 }
@@ -22,7 +26,7 @@ class _CallUIState extends State<CallUI> {
     running = true;
     _initAgoraRtcEngine();
     _addAgoraEventHandlers();
-    start();
+    start(widget.channel);
   }
 
   @override
@@ -96,10 +100,7 @@ class _CallUIState extends State<CallUI> {
               ),
             ),
           ),
-          /* Align(
-            alignment: Alignment.center,
-            child: Container(child: _buildInfoList()),
-          ),*/
+         
         ],
       ),
     );
@@ -107,14 +108,10 @@ class _CallUIState extends State<CallUI> {
 
   Future<void> _initAgoraRtcEngine() async {
     AgoraRtcEngine.create('8140cf2aea154e89889225eee28b03f8');
-
+  
     AgoraRtcEngine.enableAudio();
-    // AgoraRtcEngine.setParameters('{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}');
     AgoraRtcEngine.setChannelProfile(ChannelProfile.Communication);
 
-    VideoEncoderConfiguration config = VideoEncoderConfiguration();
-    config.orientationMode = VideoOutputOrientationMode.FixedPortrait;
-    AgoraRtcEngine.setVideoEncoderConfiguration(config);
   }
 
   void _addAgoraEventHandlers() {
@@ -163,9 +160,9 @@ class _CallUIState extends State<CallUI> {
     };
   }
 
-  void start() async {
+  void start(String channel) async {
     await AgoraRtcEngine.startPreview();
-    await AgoraRtcEngine.joinChannel(null, 'flutter', null, 0);
+    await AgoraRtcEngine.joinChannel(null, channel, null, 0);
   }
 
   Widget _buildInfoList() {

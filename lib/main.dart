@@ -1,10 +1,21 @@
-import 'package:call_app/callUI.dart';
+import 'package:call_app/ui/callUI.dart';
+import 'package:call_app/ui/pickUpUI.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 TextEditingController textController = TextEditingController();
 String callID = "1";
 final navigatorKey = GlobalKey<NavigatorState>();
+final databaseReference = Firestore.instance;
+
 void main() => runApp(MyApp());
+
+void addCall(String channelId, String callerName,String callerPic) async {
+  await databaseReference
+      .collection("Calls")
+      .add({'channelId': '$channelId', 'callerName': '$callerName','callerPic':'$callerPic'});
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -37,10 +48,11 @@ class MyApp extends StatelessWidget {
                   Icons.call,
                   color: Colors.white,
                 ),
-                onPressed: () {
-                  navigatorKey.currentState.push(MaterialPageRoute(
-                    builder: (context) => CallUI(),
-                  ));
+                onPressed: () async {
+                  await addCall(callID, "callerName","callerPic");
+                  /*navigatorKey.currentState.push(MaterialPageRoute(
+                    builder: (context) => CallUI(callID),
+                  ));*/
                 },
               ),
             )
